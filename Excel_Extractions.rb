@@ -1,18 +1,23 @@
-require 'roo-xls'
-xls = Roo::Spreadsheet.open('/Users/oliviersztaba/Documents/LgAg_030401-040229.xls')
+
+ require 'roo-xls'
+xls = Roo::Spreadsheet.open('/Users/oliviersztaba/Documents/LgAgCurrent.xls')
  
- index = 0
+ index = 1
  rows = (xls.sheet(0).column(5).count {|cell| cell != nil}) + 1 
  rate_schedule = nil
  season = nil
  time_of_use_period = nil
  demand_charge = nil
  energy_charge = nil
- CSV.open("LgAg_030401-040229test.csv", "w") do |csv|
+ CSV.open("LgAgCurrenthopethisworkshehehe.csv", "w") do |csv|
 
  while index < rows do
    unless xls.sheet(0).row(index)[0] == nil 
      rate_schedule = xls.sheet(0).row(index)[0]
+     rate_schedule = rate_schedule.split('4/')
+     rate_schedule.delete_at(1)
+     rate_schedule.delete_at(1)
+     rate_schedule = rate_schedule[0]
    end
    
    unless xls.sheet(0).row(index)[3] == nil 
@@ -23,32 +28,36 @@ xls = Roo::Spreadsheet.open('/Users/oliviersztaba/Documents/LgAg_030401-040229.x
       time_of_use_period = xls.sheet(0).row(index)[4]
       if time_of_use_period == "-"
         time_of_use_period.gsub!('-', '0')
+      end
     end
-  end
     
     unless xls.sheet(0).row(index)[5] == nil  
        demand_charge =  xls.sheet(0).row(index)[5]
        if demand_charge == "-"
          demand_charge.gsub!('-', '0')
-    end
-  end
+       end
+     end
     
     unless xls.sheet(0).row(index)[6] == nil  
        energy_charge =  xls.sheet(0).row(index)[6]
        if energy_charge == "-"
          energy_charge.gsub!('-', '0')
+       end
+     end
+  
+  if rate_schedule.include?('and')
+    rate_schedule.split("and").each do |rate|
+      csv << [rate, season, time_of_use_period, demand_charge, energy_charge]
     end
+  else
+    csv << [rate_schedule, season, time_of_use_period, demand_charge, energy_charge]  
   end
-    
-   csv << [rate_schedule, season, time_of_use_period, demand_charge, energy_charge]
+  
+  
  
  index += 1
  end
 end
-
-
- 
- 
  
  
  
