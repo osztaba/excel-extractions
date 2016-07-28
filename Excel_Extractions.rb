@@ -9,17 +9,16 @@ xls = Roo::Spreadsheet.open('/Users/oliviersztaba/Documents/LgAgCurrent.xls')
  time_of_use_period = nil
  demand_charge = nil
  energy_charge = nil
- CSV.open("LgAgCurrenthopethisworkshehehe.csv", "w") do |csv|
+ CSV.open("LgAgCurrent.csv", "w") do |csv|
 
  while index < rows do
    unless xls.sheet(0).row(index)[0] == nil 
      rate_schedule = xls.sheet(0).row(index)[0]
-     rate_schedule = rate_schedule.split('4/')
-     rate_schedule.delete_at(1)
-     rate_schedule.delete_at(1)
-     rate_schedule = rate_schedule[0]
+     if rate_schedule.include?('/')
+       rate_schedule = rate_schedule.split('/')[0].chop
+     end
    end
-   
+ 
    unless xls.sheet(0).row(index)[3] == nil 
      season = xls.sheet(0).row(index)[3]
    end
@@ -52,14 +51,9 @@ xls = Roo::Spreadsheet.open('/Users/oliviersztaba/Documents/LgAgCurrent.xls')
   else
     csv << [rate_schedule, season, time_of_use_period, demand_charge, energy_charge]  
   end
-  
-  
- 
+
  index += 1
  end
 end
- 
- 
- 
- 
+
  
